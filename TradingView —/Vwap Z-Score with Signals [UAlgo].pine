@@ -1,0 +1,42 @@
+// This Pine Script™ code is subject to the terms of the Attribution-NonCommercial-ShareAlike 4.0 International (CC BY-NC-SA 4.0) https://creativecommons.org/licenses/by-nc-sa/4.0/
+// © UAlgo
+//@version=5
+indicator("Vwap Z-Score with Signals [UAlgo]", shorttitle="Vwap Z-Score with Signals [UAlgo]", overlay=false)
+
+len = input.int(20, title="VWAP Z-Score Length",group ="Vvwap Z-Score with Signals Settings" )
+upper_top = input.float(3.0, title="Upper Threshold Top",group ="Vvwap Z-Score with Signals Settings")
+upper_bottom = input.float(2.5, title="Upper Threshold Bottom",group ="Vvwap Z-Score with Signals Settings")
+lower_top = input.float(-3.0, title="Lower Threshold Top",group ="Vvwap Z-Score with Signals Settings")
+lower_bottom = input.float(-2.5, title="Lower Threshold Bottom",group ="Vvwap Z-Score with Signals Settings")
+showSignals = input.bool(true,title = "Show Reversal Signals",group ="Vvwap Z-Score with Signals Settings")
+color_above_zero = input.color(color.new(#7FFF00, 0),title="Line Color ",inline = "visual",group ="Vvwap Z-Score with Signals Settings")
+color_below_zero = input.color(color.new(#FF00FF, 0),title=" ",inline = "visual",group ="Vvwap Z-Score with Signals Settings")
+
+calc_zvwap_enhanced(periods) =>
+    vw_mean = math.sum(volume * close, periods) / math.sum(volume, periods)
+    vw_sd = math.sqrt(ta.sma(math.pow(close - vw_mean, 2), periods))
+    vwapz = (close - vw_mean) / vw_sd
+    vwapz
+
+ub_high = plot(upper_top, title="Overbought High", color=color.rgb(255, 0, 0, 0))
+ub_low = plot(upper_bottom, title="Overbought Low", color=color.rgb(255, 0, 0, 0))
+fill(ub_high, ub_low, color=color.rgb(255, 0, 0, 90))
+
+os_high = plot(lower_top, title="Oversold High", color=color.rgb(0, 255, 0, 0))
+os_low = plot(lower_bottom, title="Oversold Low", color=color.rgb(0, 255, 0, 0))
+fill(os_high, os_low, color=color.rgb(0, 255, 0, 90))
+
+zvwap_val = calc_zvwap_enhanced(len)
+
+plot(zvwap_val, title="ZVWAP",
+     color=zvwap_val >= 0 ? color_above_zero : color_below_zero,
+     linewidth=2)
+
+alert_condition_up = zvwap_val > upper_bottom  
+alert_condition_down = zvwap_val < lower_bottom  
+
+plotshape(alert_condition_down and showSignals? zvwap_val - 1.2 : na, title="Support Signal", location=location.absolute, color=na, text="🔼" )
+plotshape(alert_condition_up and showSignals ? zvwap_val +0.3: na, title="Resistance Signal", location=location.absolute, color=na, text="🔽" )
+
+alertcondition(condition = alert_condition_down,title="VWAP Z-Score Buy", message="ZVWAP crossed above resistance")
+alertcondition(condition = alert_condition_up, title="VWAP Z-Score Sell", message="ZVWAP crossed below support")
