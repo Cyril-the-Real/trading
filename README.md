@@ -12,7 +12,9 @@
 
 
 
+
 [Martingale (betting system)](https://en.wikipedia.org/wiki/Martingale_(betting_system))
+
 <https://stakecommunity.com/topic/7090-some-basic-martingale-maths/>
 
 
