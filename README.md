@@ -10,8 +10,7 @@
 
 [Vwap Z-Score with Signals [UAlgo] — Indicator by UAlgo ](https://www.tradingview.com/script/3FaBZQkX-Vwap-Z-Score-with-Signals-UAlgo/)
 
-
-
+## `martingale.ods`
 
 [Martingale (betting system)](https://en.wikipedia.org/wiki/Martingale_(betting_system))
 
